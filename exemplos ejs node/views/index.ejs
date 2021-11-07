@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Pergunte Aqui</title>
+</head>
+<body>
+
+    <img src="https://www.showmetech.com.br/wp-content/uploads//2021/02/capa-dog.png" height="200px" width="100%">
+
+    <h1>Pergunte Aqui</h1>
+
+    <h2>variaveis do backend</h2>
+    
+    <p><%= nome %></p>
+    <p><%= lang %></p>
+    
+    
+    <% if(msg == true){ %>
+        <h3>Mensagem de erro</h3>
+    <% } else { %>
+            <h3 style="color: brown;">Sem erros</h3>
+    <% } %>
+
+    <% produtos.forEach( function(produto){%>
+        <hr>
+        <h3><%= produto.nome %></h3>
+        <h4><%= (produto.preco).toFixed(2) %> </h4>
+    <% }) %>
+
+        
+</body>
+</html>

@@ -1,0 +1,22 @@
+[
+    {
+        "nome": "Márcio",
+        "curso": "NodeJs",
+        "categoria": "React"
+    },
+    {
+        "nome": "Luis",
+        "curso": "ReactJs",
+        "categoria": "React"
+    },
+    {
+        "nome": "Daniel",
+        "curso": "GIT",
+        "categoria": "T.I."
+    },
+    {
+        "nome": "Souza",
+        "curso": "Flutter",
+        "categoria": "Mobile"
+    }
+]

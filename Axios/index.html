@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja de Games</title>
+
+    <div>
+        <h2>Login</h2>
+        <input type="text" name="email" id='email' placeholder='digite seu e-mail'><br><br>
+        <input type="text" name="password" id='password' placeholder='digite sua senha'><br><br>
+        <button type="button" onclick="login()">Entrar</button>
+    </div>
+
+    <hr>
+    <h4>Lista de jogos</h4>
+    <ul id=games></ul>
+    <hr>
+    <br>
+    <div>
+        <h5> Cadastrar novo jogo </h5><br>
+        <input type="text" name="title" id="title" placeholder="Título do Jogo"><br><br>
+        <input type="text" name="year" id="year" placeholder="Ano de criação do Jogo"><br><br>
+        <input type="text" name="price" id="price" placeholder="Preço do Jogo"><br><br>
+
+        <button type="button" onclick="RegisterGames()"> Cadastrar </button>
+    </div>
+    <div>
+        <h5> Editar Jogo</h5><br>
+        <input type="text" name="idEdit" id="idEdit" placeholder="Id do jogo"><br><br>
+        <input type="text" name="titleEdit" id="titleEdit" placeholder="Título do Jogo"><br><br>
+        <input type="text" name="yearEdit" id="yearEdit" placeholder="Ano de criação do Jogo"><br><br>
+        <input type="text" name="priceEdit" id="priceEdit" placeholder="Preço do Jogo"><br><br>
+
+        <button type="button" onclick="updateGame()"> Editar </button>
+    </div>
+</head>
+
+<body>
+
+
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+    var axiosConfig = {
+        headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+    }
+
+
+    function login() {
+
+        var emailField = document.getElementById('email')
+        var passwordField = document.getElementById('password')
+
+        var email = emailField.value
+        var password = passwordField.value
+
+        axios.post('http://localhost:3001/auth', {
+            email,
+            password
+        }).then((res) => {
+            var token = res.data.token
+            localStorage.setItem('token', token)
+            axios.axiosConfig.headers.Authorization = 'Bearer ' + localStorage.getItem('token')
+            alert('usuário logado')
+        }).catch((err) => {
+            alert('credenciais incorretas')
+        })
+
+    }
+
+
+
+    function RegisterGames() {
+        var titleInput = document.getElementById('title')
+        var yearInput = document.getElementById('year')
+        var priceInput = document.getElementById('price')
+
+        var game = {
+            title: titleInput.value,
+            year: yearInput.value,
+            price: priceInput.value
+        }
+
+        axios.post('http://localhost:3001/games', game, axiosConfig).then((resp) => {
+            if (resp.status == 200) {
+                alert('Game cadastrado!!')
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
+    function deleteGame(itemList) {
+        var id = itemList.getAttribute('data-id') //pegando o atributo dinâmico
+
+        axios.delete('http://localhost:3001/games/' + id, axiosConfig).then(() => {
+            alert('game deletado com sucesso')
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
+    function loadForm(itemList) {
+        var id = itemList.getAttribute('data-id')
+        var title = itemList.getAttribute('data-title')
+        var year = itemList.getAttribute('data-year')
+        var price = itemList.getAttribute('data-price')
+
+        var idField = document.getElementById('idEdit').value = id
+        var titleField = document.getElementById('titleEdit').value = title
+        var yearField = document.getElementById('yearEdit').value = year
+        var priceField = document.getElementById('priceEdit').value = price
+
+    }
+
+    function updateGame() {
+        var idInput = document.getElementById('idEdit')
+        var titleInput = document.getElementById('titleEdit')
+        var yearInput = document.getElementById('yearEdit')
+        var priceInput = document.getElementById('priceEdit')
+
+        var game = {
+            title: titleInput.value,
+            year: yearInput.value,
+            price: priceInput.value
+        }
+
+        var id = idInput.value
+
+        axios.put('http://localhost:3001/games/' + id, game, axiosConfig).then((resp) => {
+            if (resp.status == 200) {
+                alert('Game atualizado!!')
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
+
+
+    axios.get('http://localhost:3001/games', axiosConfig).then((resp) => {
+        var games = resp.data
+        var list = document.getElementById("games")
+
+        games.forEach(g => {
+            var itemList = document.createElement('li')
+
+            //criando atributos customizaveis atravas do JS
+            itemList.setAttribute('data-id', g.id)
+            itemList.setAttribute('data-title', g.title)
+            itemList.setAttribute('data-year', g.year)
+            itemList.setAttribute('data-price', g.price)
+
+            itemList.innerHTML = g.title + " --------- R$ " + g.price
+
+            var delBtn = document.createElement('button')  //criando um botão para cada item da lista dinamicamente 
+            delBtn.innerHTML = "Deletar"
+            //adicionando a função de deleção
+            delBtn.addEventListener('click', function () {
+                deleteGame(itemList)
+            })
+
+            var editBtn = document.createElement('button')
+            editBtn.addEventListener('click', function () {
+                loadForm(itemList)
+            })
+            editBtn.innerHTML = 'Editar'
+
+
+            itemList.appendChild(delBtn)
+            itemList.appendChild(editBtn)
+
+
+            list.appendChild(itemList)
+        })
+    }).catch((err) => {
+        console.log(err)
+    })
+
+</script>
+
+</html>
